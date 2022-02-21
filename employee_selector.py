@@ -44,14 +44,29 @@ def get_employees_by_skill(skill, skill_mapper):
 
 
 def get_employees_by_skill_set(skill_set, skill_mapper):
+    # using a set to prevent redundancy
     employees = set()
-
     for skill in skill_set:
         employees.update(get_employees_by_skill(skill, skill_mapper))
 
-    return employees
+    return sorted(employees)
 
 
-skill_map = load_skill_mapper('skill_map.csv')
+# returning one employee skill vector if the other is a subset of that one
+def reduce_redundancy(employee_vectors):
+    merged_vec = np.logical_or(employee_vectors[0], employee_vectors[1]).astype(int)
 
-print(get_employees_by_skill_set(['l', 'q', 's'], skill_map))
+    if np.array_equal(merged_vec, employee_vectors[0]):
+        return employee_vectors[0]
+    if np.array_equal(merged_vec, employee_vectors[1]):
+        return employee_vectors[1]
+    else:
+        return employee_vectors
+
+
+
+
+#skill_map = load_skill_mapper('skill_map.csv')
+
+#print(get_employees_by_skill_set(['l', 'q', 's'], skill_map))
+print(reduce_redundancy([np.asarray([0,0,0,1,0]), np.asarray([0,0,1,1,0])]))
