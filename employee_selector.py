@@ -1,20 +1,25 @@
+from itertools import combinations
 import numpy as np
 
 
+def employee_to_index(employee):
+    return ord(employee) - 65
+
+
 # expects a-z, returns 0-26
-def letter_to_int(letter):
-    return ord(letter)-97
+def skill_to_int(letter):
+    return ord(letter) - 97
 
 
 # expects 0-7, return A-H
 def index_to_employee(idx):
-    return chr(int(idx)+65)
+    return chr(int(idx) + 65)
 
 
 # the map to read in has each employee is a new line
 def load_skill_mapper(file_path):
-    lower_bound = letter_to_int('a')
-    upper_bound = letter_to_int('z')
+    lower_bound = skill_to_int('a')
+    upper_bound = skill_to_int('z')
 
     with open(file_path, 'r', encoding='utf-8') as f:
         raw_lines = f.read().split('\n')
@@ -25,7 +30,7 @@ def load_skill_mapper(file_path):
         for i, line in enumerate(raw_lines):
             letters = line.split(',')[1:]
             for char in letters:
-                skill_array[i][letter_to_int(char)] = 1
+                skill_array[i][skill_to_int(char)] = 1
 
     return skill_array
 
@@ -33,7 +38,7 @@ def load_skill_mapper(file_path):
 # expects the skill char
 def get_employees_by_skill(skill, skill_mapper):
     employees = []
-    skill_idx = letter_to_int(skill)
+    skill_idx = skill_to_int(skill)
     intersection_array = skill_mapper[:, skill_idx]
 
     for i, num in enumerate(intersection_array):
@@ -53,20 +58,32 @@ def get_employees_by_skill_set(skill_set, skill_mapper):
 
 
 # returning one employee skill vector if the other is a subset of that one
-def reduce_redundancy(employee_vectors):
-    merged_vec = np.logical_or(employee_vectors[0], employee_vectors[1]).astype(int)
+def reduce_redundancy(employee_sets):
+    for i in range(0, len(employee_sets)):
+        for k in range(1, len(employee_sets)-i):
+            if set(employee_sets[i]).issubset(set(employee_sets[i+k])):
+                employee_sets[i+k] = [-1]
 
-    if np.array_equal(merged_vec, employee_vectors[0]):
-        return employee_vectors[0]
-    if np.array_equal(merged_vec, employee_vectors[1]):
-        return employee_vectors[1]
+    reduced_employee_sets = list(filter(lambda x: x != [-1], employee_sets))
+
+    return reduced_employee_sets
+
+
+# returning all possible combinations of given employees
+def generate_employee_combinations(employees):
+    employee_combinations = []
+    for i in range(1, len(employees)+1):
+        employee_combinations.extend(set(list(combinations(employees, i))))
+
+    return employee_combinations
+
+
+def is_skill_set_covered(skill_set, employees, skill_mapper):
+    employee_rows = skill_mapper[[employee_to_index(e) for e in employees], :]
+    skill_intersection = np.sum(employee_rows[:, [skill_to_int(s) for s in skill_set]], axis=0)
+
+    if np.all(skill_intersection >= 1):
+        return True
     else:
-        return employee_vectors
+        return False
 
-
-
-
-#skill_map = load_skill_mapper('skill_map.csv')
-
-#print(get_employees_by_skill_set(['l', 'q', 's'], skill_map))
-print(reduce_redundancy([np.asarray([0,0,0,1,0]), np.asarray([0,0,1,1,0])]))
