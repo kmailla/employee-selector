@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 
 # expects a-z, returns 0-26
@@ -17,15 +16,11 @@ def load_skill_mapper(file_path):
     lower_bound = letter_to_int('a')
     upper_bound = letter_to_int('z')
 
-    # the columns will be the employee's names and each expertise
-    #expertise_df = pd.DataFrame(columns=['name'] + [str(i) for i in range(lower_bound, upper_bound)])
-
     with open(file_path, 'r', encoding='utf-8') as f:
         raw_lines = f.read().split('\n')
 
-        # the expertise array is the number of different skills time the number of employees
+        # the skill array  = (number of employees) * (the number of different skills)
         skill_array = np.zeros((len(raw_lines), upper_bound-lower_bound+1))
-        print(skill_array)
 
         for i, line in enumerate(raw_lines):
             letters = line.split(',')[1:]
@@ -57,6 +52,6 @@ def get_employees_by_skill_set(skill_set, skill_mapper):
     return employees
 
 
-skillmap = load_skill_mapper('expertise_map.csv')
+skill_map = load_skill_mapper('skill_map.csv')
 
-print(get_employees_by_skill_set(['l', 'q', 's'], skillmap))
+print(get_employees_by_skill_set(['l', 'q', 's'], skill_map))
