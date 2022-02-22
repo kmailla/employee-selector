@@ -38,7 +38,7 @@ def generate_employee_group_combinations(employees):
 
 
 class EmployeeSelector:
-    skill_mapper = None
+    skill_matrix = None
 
     def __init__(self, skill_mapper_file_path):
         lower_bound = skill_to_int('a')
@@ -48,18 +48,18 @@ class EmployeeSelector:
             raw_lines = f.read().split('\n')
 
             # the skill array  = (number of employees) * (the number of different skills)
-            self.skill_mapper = np.zeros((len(raw_lines), upper_bound-lower_bound+1))
+            self.skill_matrix = np.zeros((len(raw_lines), upper_bound - lower_bound + 1))
 
             for i, line in enumerate(raw_lines):
                 letters = line.split(',')[1:]
                 for char in letters:
-                    self.skill_mapper[i][skill_to_int(char)] = 1
+                    self.skill_matrix[i][skill_to_int(char)] = 1
 
     # expects the skill char
     def get_employees_by_skill(self, skill):
         employees = []
         skill_idx = skill_to_int(skill)
-        intersection_array = self.skill_mapper[:, skill_idx]
+        intersection_array = self.skill_matrix[:, skill_idx]
 
         for i, num in enumerate(intersection_array):
             if num == 1:
@@ -76,7 +76,7 @@ class EmployeeSelector:
         return sorted(employees)
 
     def is_skill_set_covered(self, skill_set, employees):
-        employee_rows = self.skill_mapper[[employee_to_index(e) for e in employees], :]
+        employee_rows = self.skill_matrix[[employee_to_index(e) for e in employees], :]
         skill_intersection = np.sum(employee_rows[:, [skill_to_int(s) for s in skill_set]], axis=0)
 
         if np.all(skill_intersection >= 1):
