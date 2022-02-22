@@ -4,9 +4,10 @@ the members of the group cover with the groups being not bigger than needed.
 
 
 ## Running the algorithm locally
-The prerequisites for running this project locally is having Python3.8+ installed along with python3-venv:
+The prerequisites for running this project locally is having Python3.8+ installed along with python3-venv and pip:
 ```
 apt install python3-venv
+apt install python3-pip
 ```
 After that, navigate to the root of the project and start the `setup.sh` script:
 ```
