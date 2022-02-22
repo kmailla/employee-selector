@@ -18,7 +18,7 @@ This will create a virtual environment and download the necessary packages.
 To run the algorithm for a given set of required skills, use the following command (note: the skills do not need to be
 in alphabetical order):
 ```
-python run_selection.py a b 
+python3 run_selection.py a b 
 ```
 The output for this will be the following:
 ```
@@ -30,5 +30,5 @@ G H
 ## Run tests
 In order to run the tests, run the following commands in the root of the project:
 ```
-python -m unittest tests.selector
+python3 -m unittest tests.selector
 ```
