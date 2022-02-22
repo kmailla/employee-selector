@@ -1,31 +1,6 @@
 from itertools import combinations
 import numpy as np
-
-
-# expects A-H, returns 0-7
-def employee_to_index(employee):
-    employee_index = ord(employee) - 65
-    if employee_index < 0 or employee_index > 7:
-        raise ValueError('Expected input: A-H. Got {} instead.'.format(employee_index))
-    else:
-        return employee_index
-
-
-# expects a-z, returns 0-25
-def skill_to_int(letter):
-    skill_int = ord(letter) - 97
-    if skill_int < 0 or skill_int > 25:
-        raise ValueError('Expected input: a-z. Got {} instead.'.format(letter))
-    else:
-        return skill_int
-
-
-# expects 0-7, returns A-H
-def index_to_employee(idx):
-    if idx < 0 or idx > 7:
-        raise ValueError('Expected input: 0-7. Got {} instead.'.format(idx))
-    else:
-        return chr(int(idx) + 65)
+from utils import employee_to_index, index_to_employee, skill_to_int
 
 
 class EmployeeSelector:
@@ -62,10 +37,10 @@ class EmployeeSelector:
         :param skill: a skill (a-z)
         :returns: a list of employees
         """
-        employees = []
         skill_idx = skill_to_int(skill)
         intersection_array = self.skill_matrix[:, skill_idx]
 
+        employees = []
         for i, num in enumerate(intersection_array):
             if num == 1:
                 employees.append(index_to_employee(i))
@@ -124,8 +99,10 @@ class EmployeeSelector:
         for i in range(0, len(employee_groups)):
             for k in range(1, len(employee_groups) - i):
                 if set(employee_groups[i]).issubset(set(employee_groups[i + k])):
+                    # erase the group that is a subset of another existing one
                     employee_groups[i + k] = [-1]
 
+        # filter out erased groups
         nonredundant_groups = list(filter(lambda x: x != [-1], employee_groups))
 
         return sorted(nonredundant_groups)
