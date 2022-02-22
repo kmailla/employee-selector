@@ -1,8 +1,13 @@
 from argparse import ArgumentParser
-from employee_selector import EmployeeSelector, get_ideal_groups
+from employee_selector import EmployeeSelector
 
 
 def list_groups(groups):
+    # input:
+    # [['A'], ['B', 'C']]
+    # output:
+    # A
+    # B C
     print(''.join([' '.join(group)+'\n' for group in groups]))
 
 
@@ -16,5 +21,7 @@ if __name__ == '__main__':
     required_skills = args.skills
 
     selector = EmployeeSelector()
-    ideal_groups = get_ideal_groups(required_skills, selector)
+    ideal_groups = selector.get_ideal_groups(required_skills)
+
+    # printing the list of groups to the command line in the required format
     list_groups(ideal_groups)
