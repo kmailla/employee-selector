@@ -1,23 +1,20 @@
-from employee_selector import EmployeeSelector, generate_employee_group_combinations, reduce_redundancy
+from argparse import ArgumentParser
+from employee_selector import EmployeeSelector, get_ideal_groups
 
 
-def run():
-    #required_skills = ['l', 'q', 's']
-    required_skills = ['a', 'b', 'd','e','i','l','n','o','r','s','t']
-    selector = EmployeeSelector('skill_map.csv')
+def list_groups(groups):
+    print(''.join([' '.join(group)+'\n' for group in groups]))
 
-    # get all the employees that have at least one of the required skills
-    skilled_employees = selector.get_employees_by_skill_set(required_skills)
 
-    # generate all the possible group combinations out of the selected employees
-    employee_groups = generate_employee_group_combinations(skilled_employees)
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('skills', nargs='*', type=str, help='skill are symbolized by characters between a-z')
 
-    correct_groups = []
+    args = parser.parse_args()
 
-    for group in employee_groups:
-        if selector.is_skill_set_covered(required_skills, group):
-            correct_groups.append(group)
+    # read the given skills from the command line
+    required_skills = args.skills
 
-    print(correct_groups)
-    reduced = reduce_redundancy(correct_groups)
-    print(sorted(reduced))
+    selector = EmployeeSelector()
+    ideal_groups = get_ideal_groups(required_skills, selector)
+    list_groups(ideal_groups)
