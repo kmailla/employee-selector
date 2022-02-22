@@ -25,22 +25,44 @@ def reduce_redundancy(employee_sets):
 
     reduced_employee_sets = list(filter(lambda x: x != [-1], employee_sets))
 
-    return reduced_employee_sets
+    return sorted(reduced_employee_sets)
 
 
 # returning all possible combinations of given employees
 def generate_employee_group_combinations(employees):
     employee_combinations = []
     for i in range(1, len(employees) + 1):
-        employee_combinations.extend(set(list(combinations(employees, i))))
+        employee_combinations.extend(list(combinations(employees, i)))
 
     return employee_combinations
+
+
+def get_ideal_groups(required_skills, employee_selector):
+    # get all the employees that have at least one of the required skills
+    skilled_employees = employee_selector.get_employees_by_skill_set(required_skills)
+
+    # generate all the possible group combinations out of the selected employees
+    employee_groups = generate_employee_group_combinations(skilled_employees)
+
+    skilled_groups = []
+
+    for group in employee_groups:
+        if employee_selector.is_skill_set_covered(required_skills, group):
+            skilled_groups.append(list(group))
+
+    print(skilled_groups)
+
+    final_employee_groups = reduce_redundancy(skilled_groups)
+
+    print(final_employee_groups)
+
+    return final_employee_groups
 
 
 class EmployeeSelector:
     skill_matrix = None
 
-    def __init__(self, skill_mapper_file_path):
+    def __init__(self, skill_mapper_file_path='skill_matrix.csv'):
         lower_bound = skill_to_int('a')
         upper_bound = skill_to_int('z')
 
